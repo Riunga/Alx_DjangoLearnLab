@@ -25,3 +25,23 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render
+
+def check_role(role):
+    def decorator(user):
+        return user.userprofile.role == role
+    return user_passes_test(decorator)
+
+@check_role('Admin')
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+@check_role('Librarian')
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+@check_role('Member')
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
