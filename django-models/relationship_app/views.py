@@ -28,22 +28,40 @@ def register(request):
 
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
-from .models import Library, Book  # Ensure these imports are also included
+from .models import Book, Library
 
-def check_role(role):
-    def decorator(user):
-        return user.userprofile.role == role
-    return user_passes_test(decorator)
+def is_admin(user):
+    return user.userprofile.role == 'Admin'
 
-@check_role('Admin')
+def is_librarian(user):
+    return user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    return user.userprofile.role == 'Member'
+
+@user_passes_test(is_admin)
 def admin_view(request):
+    # Logic for the admin view
     return render(request, 'relationship_app/admin_view.html')
 
-@check_role('Librarian')
+@user_passes_test(is_librarian)
 def librarian_view(request):
+    # Logic for the librarian view
     return render(request, 'relationship_app/librarian_view.html')
 
-@check_role('Member')
+@user_passes_test(is_member)
 def member_view(request):
+    # Logic for the member view
     return render(request, 'relationship_app/member_view.html')
+
+def list_books(request):
+    books = Book.objects.all()
+    return render(request, 'relationship_app/list_books.html', {'books': books})
+
+from django.views.generic import DetailView
+
+class LibraryDetailView(DetailView):
+    model = Library
+    template_name = 'relationship_app/library_detail.html'
+
 
