@@ -27,13 +27,13 @@ urlpatterns = [
 ]
 
 from django.urls import path
+
 from . import views  # Import your views
 
 urlpatterns = [
-    path('add-book/', views.add_book, name='add_book'),
-    path('edit-book/<int:book_id>/', views.edit_book, name='edit_book'),
-    path('delete-book/<int:book_id>/', views.delete_book, name='delete_book'),   
-
+    path('add-book/', views.add_book, name='add_book'),  # Added path for adding book
+    path('edit-book/<int:book_id>/', views.edit_book, name='edit_book'),  # Added path for editing book
+    path('delete-book/<int:book_id>/', views.delete_book, name='delete_book'),
 ]
 
 
