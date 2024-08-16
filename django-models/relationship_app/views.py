@@ -9,5 +9,4 @@ def list_books(request):
 class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
-    context_object_name = 'library'  # Ensure this line is included to set the context name for the template
-
+    context_object_name = 'library'
