@@ -27,13 +27,14 @@ urlpatterns = [
 ]
 
 from django.urls import path
-
-from . import views  # Import your views
+from .views import add_book, edit_book, delete_book
 
 urlpatterns = [
-    path('add-book/', views.add_book, name='add_book'),  # Added path for adding book
-    path('edit-book/<int:book_id>/', views.edit_book, name='edit_book'),  # Added path for editing book
-    path('delete-book/<int:book_id>/', views.delete_book, name='delete_book'),
+    path('add_book/', add_book, name='add_book'),  # Notice the underscore
+    path('edit_book/<int:book_id>/', edit_book, name='edit_book'),  # Notice the underscore
+    path('delete_book/<int:book_id>/', delete_book, name='delete_book'),
+]
+
 ]
 
 
