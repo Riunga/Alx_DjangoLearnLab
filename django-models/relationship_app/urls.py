@@ -8,7 +8,8 @@ urlpatterns = [
 
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import register
+from .views.register  # Import the register view
+
 
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
