@@ -28,6 +28,7 @@ def register(request):
 
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
+from .models import Library, Book  # Ensure these imports are also included
 
 def check_role(role):
     def decorator(user):
