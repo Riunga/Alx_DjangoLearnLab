@@ -87,3 +87,18 @@ def delete_book(request, book_id):
 
 # Use Django ORM (safe):
 books = Book.objects.filter(title=title)
+
+from django.shortcuts import render
+from .forms import ExampleForm
+
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            # Do something with the data
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/form_example.html', {'form': form})
