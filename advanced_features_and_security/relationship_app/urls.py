@@ -35,6 +35,7 @@ urlpatterns = [
     path('delete_book/<int:book_id>/', delete_book, name='delete_book'),
 ]
 
+]
 
 
  
