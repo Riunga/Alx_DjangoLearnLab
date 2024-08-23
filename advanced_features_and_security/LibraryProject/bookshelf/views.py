@@ -84,3 +84,6 @@ def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     # Your code for deleting the book
     pass
+
+# Use Django ORM (safe):
+books = Book.objects.filter(title=title)
