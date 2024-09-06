@@ -39,6 +39,7 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]  # Apply the custom permission
 
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from rest_framework import generics
 from .models import Book
 from .serializers import BookSerializer
