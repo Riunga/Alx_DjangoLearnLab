@@ -1,4 +1,5 @@
 from datetime import timezone
+from msilib.schema import ListView
 from django.shortcuts import render
 
 # Create your views here.
@@ -38,37 +39,36 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]  # Apply the custom permission
 
-from rest_framework import generics
 from .models import Book
 from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 # ListAPIView for retrieving all books
-class BookListView(generics.ListView):
+class BookListView(ListView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]  # Read access for unauthenticated users
 
 # RetrieveAPIView for retrieving a single book by ID
-class BookDetailView(generics.DetailView):
+class BookDetailView(DetailView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 # CreateAPIView for adding a new book
-class BookCreateView(generics.CreateView):
+class BookCreateView(CreateView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can create a book
 
 # UpdateAPIView for modifying an existing book
-class BookUpdateView(generics.UpdateView):
+class BookUpdateView(UpdateView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can update a book
 
 # DestroyAPIView for removing a book
-class BookDeleteView(generics.DeleteView):
+class BookDeleteView(DeleteView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can delete a book
