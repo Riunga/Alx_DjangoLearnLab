@@ -12,15 +12,15 @@ class BookList(generics.ListAPIView):
     queryset = Book.objects.all()  # Fetch all book records
     serializer_class = BookSerializer  # Use the BookSerializer to format the data
  
-from rest_framework import viewsets
+from rest_framework import generics, viewsets, permissions
 from .models import Book
 from .serializers import BookSerializer
-from .permissions import IsAdminOrReadOnly  # Import your custom permission
+from .permissions import IsAdminOrReadOnly
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAdminOrReadOnly]  # Apply the custom permission
+    permission_classes = [IsAdminOrReadOnly]
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from rest_framework import generics
