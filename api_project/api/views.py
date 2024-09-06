@@ -8,22 +8,15 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]
 
-# Ensure these imports are included
+from rest_framework import generics, viewsets, permissions
+from .models import Book
+from .serializers import BookSerializer
+from .permissions import IsAdminOrReadOnly
 from django_filters import rest_framework as filters
 from rest_framework import generics, filters as rest_framework_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Book
-from .serializers import BookSerializer
 
-# Assign DRF views to variables named as requested
-ListView = generics.ListAPIView
-DetailView = generics.RetrieveAPIView
-CreateView = generics.CreateAPIView
-UpdateView = generics.UpdateAPIView
-DeleteView = generics.DestroyAPIView
-
-# Define views using the variables
-class BookListView(ListView):
+class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
@@ -42,18 +35,18 @@ class BookListView(ListView):
     # Set the default ordering
     ordering = ['title']
 
-class BookDetailView(DetailView):
+class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookCreateView(CreateView):
+class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookUpdateView(UpdateView):
+class BookUpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookDeleteView(DeleteView):
+class BookDeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
