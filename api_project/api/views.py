@@ -83,3 +83,26 @@ class BookDeleteView(generics.DestroyAPIView):
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can delete
 
+from rest_framework.exceptions import ValidationError
+
+class BookCreateView(generics.CreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        if serializer.validated_data['publication_year'] > timezone.now().year:
+            raise ValidationError("Publication year cannot be in the future.")
+        serializer.save()
+
+class BookUpdateView(generics.UpdateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        if serializer.validated_data['publication_year'] > timezone.now().year:
+            raise ValidationError("Publication year cannot be in the future.")
+        serializer.save()
+
+
