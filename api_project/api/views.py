@@ -39,36 +39,44 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]  # Apply the custom permission
 
+from rest_framework import generics
 from .models import Book
 from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
-# ListAPIView for retrieving all books
+# Simulate ListView using ListAPIView
+ListView = generics.ListAPIView
+# Simulate DetailView using RetrieveAPIView
+DetailView = generics.RetrieveAPIView
+# Simulate CreateView using CreateAPIView
+CreateView = generics.CreateAPIView
+# Simulate UpdateView using UpdateAPIView
+UpdateView = generics.UpdateAPIView
+# Simulate DeleteView using DestroyAPIView
+DeleteView = generics.DestroyAPIView
+
+# Now use those variables in actual views
 class BookListView(ListView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Read access for unauthenticated users
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-# RetrieveAPIView for retrieving a single book by ID
 class BookDetailView(DetailView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-# CreateAPIView for adding a new book
 class BookCreateView(CreateView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can create a book
+    permission_classes = [IsAuthenticated]
 
-# UpdateAPIView for modifying an existing book
 class BookUpdateView(UpdateView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can update a book
+    permission_classes = [IsAuthenticated]
 
-# DestroyAPIView for removing a book
 class BookDeleteView(DeleteView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can delete a book
+    permission_classes = [IsAuthenticated]
