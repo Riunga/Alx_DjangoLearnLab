@@ -38,70 +38,38 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]  # Apply the custom permission
 
-from rest_framework import generics, serializers
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from api.models import Book
-from api.serializers import BookSerializer
+from rest_framework import generics
+from .models import Book
+from .serializers import BookSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
-# ListView - Retrieve all books
+# ListAPIView for retrieving all books
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]  # Public access
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Read access for unauthenticated users
 
-# DetailView - Retrieve a single book by ID
+# RetrieveAPIView for retrieving a single book by ID
 class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]  # Public access
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-# CreateView - Add a new book
+# CreateAPIView for adding a new book
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can create
+    permission_classes = [IsAuthenticated]  # Only authenticated users can create a book
 
-    # Custom validation for publication year
-    def perform_create(self, serializer):
-        if serializer.validated_data['publication_year'] > 2024:
-            raise serializers.ValidationError("Publication year cannot be in the future.")
-        serializer.save()
-
-# UpdateView - Modify an existing book
+# UpdateAPIView for modifying an existing book
 class BookUpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can update
+    permission_classes = [IsAuthenticated]  # Only authenticated users can update a book
 
-    def perform_update(self, serializer):
-        if serializer.validated_data['publication_year'] > 2024:
-            raise serializers.ValidationError("Publication year cannot be in the future.")
-        serializer.save()
-
-# DeleteView - Remove a book
+# DestroyAPIView for removing a book
 class BookDeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can delete
+    permission_classes = [IsAuthenticated]  # Only authenticated users can delete a book
 
-from rest_framework.exceptions import ValidationError
-
-class BookCreateView(generics.CreateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        if serializer.validated_data['publication_year'] > timezone.now().year:
-            raise ValidationError("Publication year cannot be in the future.")
-        serializer.save()
-
-class BookUpdateView(generics.UpdateAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_update(self, serializer):
-        if serializer.validated_data['publication_year'] > timezone.now().year:
-            raise ValidationError("Publication year cannot be in the future.")
-        serializer.save()
