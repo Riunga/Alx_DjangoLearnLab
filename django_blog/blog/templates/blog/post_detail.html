@@ -1,9 +1,13 @@
-<h2>{{ post.title }}</h2>
-<p>{{ post.content }}</p>
-<p>Published: {{ post.published_date }}</p>
-<p>Author: {{ post.author }}</p>
+{% extends "base_generic.html" %}
 
-{% if user == post.author %}
-    <a href="{% url 'post-update' post.pk %}">Edit</a>
-    <a href="{% url 'post-delete' post.pk %}">Delete</a>
-{% endif %}
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <p>{{ post.content }}</p>
+  <small>Posted by {{ post.author }} on {{ post.date_posted }}</small>
+  <br><br>
+  {% if user == post.author %}
+    <a href="{% url 'post-update' post.pk %}">Edit Post</a> |
+    <a href="{% url 'post-delete' post.pk %}">Delete Post</a>
+  {% endif %}
+  <br><a href="{% url 'post-list' %}">Back to All Posts</a>
+{% endblock %}
