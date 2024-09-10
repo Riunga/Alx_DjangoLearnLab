@@ -21,6 +21,9 @@ urlpatterns = [
 from django.urls import path
 from . import views
 
+from django.urls import path
+from . import views
+
 urlpatterns = [
     path('', views.PostListView.as_view(), name='post-list'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
@@ -29,7 +32,7 @@ urlpatterns = [
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
 
     # URL for adding a new comment to a post
-    path('post/<int:post_id>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
+    path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
 
     # URLs for editing and deleting comments
     path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
