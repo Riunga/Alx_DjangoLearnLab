@@ -8,3 +8,11 @@
 {% else %}
     <p>No posts found for this tag.</p>
 {% endif %}
+
+<!-- blog/templates/tagged_posts.html -->
+<h1>Posts tagged with "{{ tag.name }}"</h1>
+<ul>
+    {% for post in posts %}
+        <li><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></li>
+    {% endfor %}
+</ul>

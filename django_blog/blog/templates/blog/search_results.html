@@ -9,3 +9,15 @@
 {% else %}
     <p>No posts found.</p>
 {% endif %}
+
+<!-- blog/templates/search_results.html -->
+<h1>Search Results for "{{ query }}"</h1>
+{% if results %}
+    <ul>
+        {% for post in results %}
+            <li><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}

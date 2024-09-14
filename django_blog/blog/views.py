@@ -202,3 +202,29 @@ def tagged_posts_view(request, tag_name):
     tag = get_object_or_404(Tag, name=tag_name)
     posts = tag.posts.all()
     return render(request, 'blog/tagged_posts.html', {'posts': posts, 'tag': tag})
+
+# blog/views.py
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Post
+
+def search_view(request):
+    query = request.GET.get('q')
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        results = Post.objects.none()
+
+    return render(request, 'blog/search_results.html', {'results': results, 'query': query})
+
+# blog/views.py
+from taggit.models import Tag
+
+def tagged_posts_view(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = Post.objects.filter(tags=tag)
+    return render(request, 'blog/tagged_posts.html', {'posts': posts, 'tag': tag})

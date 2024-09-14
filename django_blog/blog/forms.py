@@ -20,3 +20,16 @@ class PostForm(forms.ModelForm):
         widgets = {
             'tags': TagWidget(),  # For django-taggit
         }
+
+# blog/forms.py
+from django import forms
+from .models import Post
+from taggit.forms import TagWidget  # Import TagWidget
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': TagWidget(),  # Add tags field
+        }
