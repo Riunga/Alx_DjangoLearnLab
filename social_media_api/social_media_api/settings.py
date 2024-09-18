@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-38)a06^kcf-cxk=^01&mttw*d9xi63uibp!!)s(j+)s&)4nj%$'
+SECRET_KEY = 'django-insecure-v@*rz=fuz^thutwbnlp%1srxl_pd-$7t)16y-cbf^b&@at*$0s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -48,8 +48,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'rest_framework',
-    'rest_framework.authtoken',
     'accounts',
+    'rest_framework.authtoken',
 ]
 
 ROOT_URLCONF = 'social_media_api.urls'
@@ -126,3 +126,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+ 
