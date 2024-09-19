@@ -49,10 +49,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'rest_framework',
     'accounts',
+    'posts',
     'rest_framework.authtoken',
     'django_filters',
-    'posts',
-]
+    ]
 
 ROOT_URLCONF = 'social_media_api.urls'
 
