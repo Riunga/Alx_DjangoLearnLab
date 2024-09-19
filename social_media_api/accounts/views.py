@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, generics, viewsets
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated  # This line was already present
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from .models import CustomUser
@@ -31,7 +32,7 @@ class LoginView(generics.GenericAPIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # Follow/Unfollow View
-class FollowUnfollowView(generics.GenericAPIView):
+class FollowUnfollowView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure authentication is required
 
     def post(self, request, user_id):
