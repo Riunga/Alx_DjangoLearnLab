@@ -28,3 +28,28 @@ class LoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status, viewsets
+from django.shortcuts import get_object_or_404
+from .models import CustomUser
+from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=True, methods=['post'])
+    def follow(self, request, pk=None):
+        user_to_follow = get_object_or_404(CustomUser, pk=pk)
+        request.user.following.add(user_to_follow)
+        return Response({'status': 'followed'}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def unfollow(self, request, pk=None):
+        user_to_unfollow = get_object_or_404(CustomUser, pk=pk)
+        request.user.following.remove(user_to_unfollow)
+        return Response({'status': 'unfollowed'}, status=status.HTTP_200_OK)
