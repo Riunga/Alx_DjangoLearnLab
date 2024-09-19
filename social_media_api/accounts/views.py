@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, generics, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
@@ -10,17 +9,19 @@ from .models import CustomUser
 from .serializers import RegisterSerializer, UserSerializer
 
 # User Registration View
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
+class RegisterView(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # User Login View
-class LoginView(APIView):
-    def post(self, request):
+class LoginView(generics.GenericAPIView):
+    def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
 
@@ -31,7 +32,7 @@ class LoginView(APIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 # Follow/Unfollow View
-class FollowUnfollowView(APIView):
+class FollowUnfollowView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
