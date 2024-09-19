@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'accounts',
     'rest_framework.authtoken',
     'django_filters',
+    'posts',
 ]
 
 ROOT_URLCONF = 'social_media_api.urls'
