@@ -33,7 +33,7 @@ class LoginView(generics.GenericAPIView):
 
 # Follow/Unfollow View
 class FollowUnfollowView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure authentication is required
 
     def post(self, request, user_id):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
@@ -49,4 +49,4 @@ class FollowUnfollowView(generics.GenericAPIView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure authentication is required
