@@ -147,10 +147,7 @@ class UnlikePostView(generics.DestroyAPIView):
         post = get_object_or_404(Post, pk=self.kwargs['pk'])
         return get_object_or_404(Like, user=self.request.user, post=post)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'detail': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
+
 class MarkNotificationsReadView(APIView):
     permission_classes = [IsAuthenticated]
 
