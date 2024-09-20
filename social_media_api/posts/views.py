@@ -113,38 +113,43 @@ class FeedView(generics.ListAPIView):
         return Post.objects.filter(author__in=self.request.user.following.all()).order_by('-created_at')
 
 # posts/views.py
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import status, generics, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
-from .models import Post, Like
-from notifications.models import Notification
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404  # Import this to use get_object_or_404
+from .models import Post
+from .serializers import PostSerializer
 
-class LikePostView(APIView):
+# Post ViewSet to handle CRUD operations for posts
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        like, created = Like.objects.get_or_create(user=request.user, post=post)
-        if created:
-            # Create a notification
-            Notification.objects.create(
-                recipient=post.author,
-                actor=request.user,
-                verb='liked',
-                target=post
-            )
-            return Response({'message': 'Post liked successfully'}, status=status.HTTP_200_OK)
-        return Response({'message': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+    # Retrieve a post by primary key using get_object_or_404
+    def retrieve(self, request, pk=None):
+        post = get_object_or_404(Post, pk=pk)  # Ensure this line is present
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-class UnlikePostView(APIView):
+    # Method to like a post
+    def like(self, request, pk=None):
+        post = get_object_or_404(Post, pk=pk)  # Using get_object_or_404 to retrieve the post
+        # Logic to handle liking the post (e.g., add the user to the likes)
+        post.likes.add(request.user)
+        return Response({'message': 'Post liked successfully'}, status=status.HTTP_200_OK)
+
+    # Method to unlike a post
+    def unlike(self, request, pk=None):
+        post = get_object_or_404(Post, pk=pk)  # Using get_object_or_404 to retrieve the post
+        # Logic to handle unliking the post (e.g., remove the user from the likes)
+        post.likes.remove(request.user)
+        return Response({'message': 'Post unliked successfully'}, status=status.HTTP_200_OK)
+
+class MarkNotificationsReadView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        like = Like.objects.filter(user=request.user, post=post)
-        if like.exists():
-            like.delete()
-            return Response({'message': 'Post unliked successfully'}, status=status.HTTP_200_OK)
-        return Response({'message': 'You have not liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        notifications = Notification.objects.filter(recipient=request.user, read=False)
+        notifications.update(read=True)
+        return Response({'message': 'Notifications marked as read'})
