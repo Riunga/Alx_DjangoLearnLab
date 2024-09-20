@@ -101,16 +101,13 @@ class FeedView(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import generics, permissions
 from .models import Post
 from .serializers import PostSerializer
-from django.contrib.auth.models import User
 
-class FeedView(APIView):
-    def get(self, request):
-        user = request.user
-        followed_users = user.following.all()
-        posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+class FeedView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Post.objects.filter(author__in=self.request.user.following.all()).order_by('-created_at')

@@ -66,9 +66,7 @@ from rest_framework import serializers
 from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
-    followers = serializers.StringRelatedField(many=True, read_only=True)
-    following = serializers.StringRelatedField(many=True, read_only=True)
-
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'bio', 'profile_picture', 'following', 'followers']
+        fields = ['id', 'username', 'email', 'following']
+        read_only_fields = ['following']
