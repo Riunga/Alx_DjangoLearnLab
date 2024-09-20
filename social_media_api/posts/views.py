@@ -114,6 +114,7 @@ class FeedView(generics.ListAPIView):
 
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from .models import Post, Like
 from .serializers import LikeSerializer
 from notifications.models import Notification
@@ -123,26 +124,33 @@ class LikePostView(generics.CreateAPIView):
     serializer_class = LikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        post = Post.objects.get(pk=self.kwargs['pk'])
-        if Like.objects.filter(user=self.request.user, post=post).exists():
+    def create(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        
+        if created:
+            Notification.objects.create(
+                recipient=post.author,
+                actor=request.user,
+                verb='liked your post',
+                target=post
+            )
+            return Response({'detail': 'Post liked successfully.'}, status=status.HTTP_201_CREATED)
+        else:
             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(user=self.request.user, post=post)
-        Notification.objects.create(
-            recipient=post.author,
-            actor=self.request.user,
-            verb='liked your post',
-            target=post
-        )
 
 class UnlikePostView(generics.DestroyAPIView):
     queryset = Like.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        post = Post.objects.get(pk=self.kwargs['pk'])
-        return Like.objects.get(user=self.request.user, post=post)
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        return get_object_or_404(Like, user=self.request.user, post=post)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'detail': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
 
 class MarkNotificationsReadView(APIView):
     permission_classes = [IsAuthenticated]
