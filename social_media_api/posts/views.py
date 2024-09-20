@@ -111,3 +111,40 @@ class FeedView(generics.ListAPIView):
 
     def get_queryset(self):
         return Post.objects.filter(author__in=self.request.user.following.all()).order_by('-created_at')
+
+# posts/views.py
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from .models import Post, Like
+from notifications.models import Notification
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if created:
+            # Create a notification
+            Notification.objects.create(
+                recipient=post.author,
+                actor=request.user,
+                verb='liked',
+                target=post
+            )
+            return Response({'message': 'Post liked successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.exists():
+            like.delete()
+            return Response({'message': 'Post unliked successfully'}, status=status.HTTP_200_OK)
+        return Response({'message': 'You have not liked this post'}, status=status.HTTP_400_BAD_REQUEST)
