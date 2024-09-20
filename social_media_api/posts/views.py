@@ -112,6 +112,7 @@ class FeedView(generics.ListAPIView):
     def get_queryset(self):
         return Post.objects.filter(author__in=self.request.user.following.all()).order_by('-created_at')
 
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Post, Like
@@ -124,7 +125,7 @@ class LikePostView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        post = generics.get_object_or_404(Post, pk=kwargs['pk'])
+        post = get_object_or_404(Post, pk=kwargs['pk'])
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         
         if created:
@@ -138,13 +139,14 @@ class LikePostView(generics.CreateAPIView):
         else:
             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UnlikePostView(generics.DestroyAPIView):
     queryset = Like.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        post = generics.get_object_or_404(Post, pk=self.kwargs['pk'])
-        return generics.get_object_or_404(Like, user=self.request.user, post=post)
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        return get_object_or_404(Like, user=self.request.user, post=post)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
