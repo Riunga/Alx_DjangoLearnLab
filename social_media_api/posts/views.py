@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404  # Added get_object_or_404
 
 # Create your views here.
 from rest_framework import viewsets, permissions
@@ -31,7 +31,6 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed for the author of the post/comment
         return obj.author == request.user
-
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -112,7 +111,6 @@ class FeedView(generics.ListAPIView):
     def get_queryset(self):
         return Post.objects.filter(author__in=self.request.user.following.all()).order_by('-created_at')
 
-from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from .models import Post, Like
@@ -123,7 +121,7 @@ class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+        post = get_object_or_404(Post, pk=pk)  # Fixed the missing get_object_or_404
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
@@ -137,12 +135,11 @@ class LikePostView(APIView):
         else:
             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
 
-
 class UnlikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        like = get_object_or_404(Like, user=request.user, post=post)
+        post = get_object_or_404(Post, pk=pk)  # Fixed the missing get_object_or_404
+        like = get_object_or_404(Like, user=request.user, post=post)  # Fixed the missing get_object_or_404
         like.delete()
         return Response({'detail': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
