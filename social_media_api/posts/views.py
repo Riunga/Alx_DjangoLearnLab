@@ -113,20 +113,17 @@ class FeedView(generics.ListAPIView):
         return Post.objects.filter(author__in=self.request.user.following.all()).order_by('-created_at')
 
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, permissions, status
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from .models import Post, Like
 from .serializers import LikeSerializer
 from notifications.models import Notification
 
-class LikePostView(generics.CreateAPIView):
-    queryset = Like.objects.all()
-    serializer_class = LikeSerializer
+class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        # Use the correct import for get_object_or_404
-        post = get_object_or_404(Post, pk=kwargs['pk'])
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
@@ -141,24 +138,11 @@ class LikePostView(generics.CreateAPIView):
             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UnlikePostView(generics.DestroyAPIView):
-    queryset = Like.objects.all()
+class UnlikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        # Use the correct import for get_object_or_404
-        post = get_object_or_404(Post, pk=self.kwargs['pk'])
-        like = get_object_or_404(Like, user=self.request.user, post=post)
-        return like
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
+    def delete(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        like = get_object_or_404(Like, user=request.user, post=post)
+        like.delete()
         return Response({'detail': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
-class MarkNotificationsReadView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        notifications = Notification.objects.filter(recipient=request.user, read=False)
-        notifications.update(read=True)
-        return Response({'message': 'Notifications marked as read'})
